@@ -29,6 +29,19 @@ function SoundToggle({ channels }) {
 
   return (
     <div className="sound-controls" aria-label="사운드 설정">
+      <div className="hint-channel">
+        <div className="hint-wrap">
+          <button type="button" className="hint-toggle" aria-label="서비스 안내">
+            ?
+          </button>
+          <div className="hint-box" role="tooltip">
+            서버에 메시지는 남지 않습니다.
+            <br />
+            지금 드는 생각을, 그저 흘려보내세요.
+          </div>
+        </div>
+        <span className="sound-label">안내</span>
+      </div>
       {channels.map((channel) => {
         const isActive = Boolean(activeChannels[channel.id]);
 
