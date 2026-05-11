@@ -520,7 +520,6 @@ textarea:focus {
     --boat-above-water: 72px;
     --boat-sink-depth: 18px;
     min-height: 44vh;
-    overflow: hidden;
   }
 
   .sound-controls {
@@ -597,7 +596,6 @@ textarea:focus {
     min-height: 0;
     height: 100%;
     padding: 0;
-    overflow: hidden;
   }
 
   .mountain-layer {
@@ -647,8 +645,8 @@ textarea:focus {
   }
 
   .mountain-layer {
-    bottom: 24%;
-    width: 128vw;
+    bottom: 33%;
+    width: 175vw;
   }
 
   .water-layer-back {
@@ -699,8 +697,8 @@ textarea:focus {
   }
 
   .mountain-layer {
-    bottom: 22%;
-    width: 116vw;
+    bottom: 32%;
+    width: 168vw;
   }
 
   .water-layer-back {
