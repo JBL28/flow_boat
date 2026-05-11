@@ -1,4 +1,6 @@
-# [Flow Boat](https://roodev.me/) `(배포중)`
+# Flow Boat
+
+배포중: [https://roodev.me/](https://roodev.me/)
 
 > 오늘 마음에 남은 생각을 작은 종이배에 적어, 밤의 강 위로 조용히 흘려보내는 웹 페이지입니다.
 
