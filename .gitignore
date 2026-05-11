@@ -13,6 +13,7 @@ plan.md
 .env
 .env.local
 .env.*.local
+front/.env.development
 front/.env.local
 front/.env.*.local
 back/.env
