@@ -5,6 +5,7 @@ function PaperBoat({ boat }) {
   return (
     <motion.div
       className="boat-track"
+      style={{ willChange: "transform, opacity" }}
       initial={{
         opacity: 0,
         x: "-62vw",
@@ -30,6 +31,7 @@ function PaperBoat({ boat }) {
       <motion.div
         className="boat-wrap"
         tabIndex={0}
+        style={{ willChange: "transform" }}
         animate={{ y: [0, -5, 0], rotate: [-1, 1.5, -1] }}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       >

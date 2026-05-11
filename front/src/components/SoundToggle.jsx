@@ -39,7 +39,7 @@ function SoundToggle({ channels }) {
                 audioRefs.current[channel.id] = element;
               }}
               src={channel.src}
-              preload="auto"
+              preload="none"
               loop
             />
             <button
