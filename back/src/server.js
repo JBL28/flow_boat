@@ -17,6 +17,8 @@ const maxConnectionsTotal = 500;
 const maxConnectionsPerIp = 10;
 const ipConnectionCount = new Map();
 const ipMessageTimestamps = new Map();
+let todayCountKey = getTodayKey();
+let todayBoatCount = 0;
 
 // Origin allowlist — set ALLOWED_ORIGINS=http://example.com,https://example.com in production
 const rawAllowedOrigins = process.env.ALLOWED_ORIGINS;
@@ -32,6 +34,26 @@ function getClientIp(req) {
     req.socket.remoteAddress ??
     "unknown"
   );
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getTodayBoatCount() {
+  const currentKey = getTodayKey();
+  if (currentKey !== todayCountKey) {
+    todayCountKey = currentKey;
+    todayBoatCount = 0;
+  }
+
+  return todayBoatCount;
+}
+
+function incrementTodayBoatCount() {
+  getTodayBoatCount();
+  todayBoatCount += 1;
+  return todayBoatCount;
 }
 
 const server = http.createServer((request, response) => {
@@ -111,6 +133,14 @@ wss.on("connection", (socket, request) => {
 
   socket.lastPongAt = Date.now();
 
+  socket.send(
+    JSON.stringify({
+      type: "boat:count",
+      count: getTodayBoatCount(),
+      date: todayCountKey,
+    }),
+  );
+
   socket.on("pong", () => {
     socket.lastPongAt = Date.now();
   });
@@ -156,11 +186,14 @@ wss.on("connection", (socket, request) => {
     timestamps.push(now);
     ipMessageTimestamps.set(ip, timestamps);
 
+    const count = incrementTodayBoatCount();
+
     broadcast({
       type: "boat:add",
       id: randomUUID(),
       text: sanitized,
       createdAt: new Date().toISOString(),
+      todayCount: count,
     });
   });
 });

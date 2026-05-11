@@ -5,16 +5,6 @@ import SoundToggle from "./components/SoundToggle.jsx";
 import ambienceSrc from "../resources/sound/ambience.mp3";
 import musicSrc from "../resources/sound/song.mp3";
 
-function getTodayKey() {
-  return `flow_boat_count_${new Date().toISOString().slice(0, 10)}`;
-}
-function readTodayCount() {
-  try { return Number(localStorage.getItem(getTodayKey()) ?? 0); } catch { return 0; }
-}
-function writeTodayCount(n) {
-  try { localStorage.setItem(getTodayKey(), String(n)); } catch {}
-}
-
 const boatLifetimeMs = 49500;
 // || (not ??) so that VITE_WS_URL="" also falls through to the auto-derived URL.
 // window.location.host includes the port for non-standard ports, which is correct
@@ -31,7 +21,7 @@ function App() {
   const [boats, setBoats] = useState([]);
   const [worryText, setWorryText] = useState("");
   const [isRateLimited, setIsRateLimited] = useState(false);
-  const [todayBoatCount, setTodayBoatCount] = useState(() => readTodayCount());
+  const [todayBoatCount, setTodayBoatCount] = useState(0);
   const nextBoatId = useRef(0);
   const timersRef = useRef([]);
   const socketRef = useRef(null);
@@ -59,12 +49,6 @@ function App() {
       setBoats((currentBoats) => [...currentBoats, boat]);
       const timerId = window.setTimeout(() => removeBoat(boat.id), boatLifetimeMs);
       timersRef.current.push(timerId);
-
-      setTodayBoatCount(() => {
-        const next = readTodayCount() + 1;
-        writeTodayCount(next);
-        return next;
-      });
     },
     [removeBoat],
   );
@@ -123,6 +107,14 @@ function App() {
           const message = JSON.parse(event.data);
           if (message.type === "boat:add" && typeof message.text === "string") {
             addBoat(message.text, message.id);
+            if (Number.isFinite(message.todayCount)) {
+              setTodayBoatCount(message.todayCount);
+            }
+            return;
+          }
+
+          if (message.type === "boat:count" && Number.isFinite(message.count)) {
+            setTodayBoatCount(message.count);
           }
         } catch {
           // Ignore malformed realtime messages.
