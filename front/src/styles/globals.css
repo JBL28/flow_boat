@@ -220,7 +220,8 @@ textarea:focus {
   inset: 48% 0 auto;
   z-index: 1;
   height: 8rem;
-  background: linear-gradient(90deg, transparent, rgba(240, 208, 96, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(240, 208, 96, 0.12), transparent);
+  filter: blur(4px);
 }
 
 .water-layer {
