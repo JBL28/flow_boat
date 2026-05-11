@@ -1,0 +1,52 @@
+# ── OMC / Claude ────────────────────────────────────
+.omx/
+.omc/
+.vite/
+.claude/settings.local.json
+
+# ── 민감 문서 ────────────────────────────────────────
+gettingstart.md
+plan.md
+
+# ── 환경변수 (실제 값이 담기는 파일) ────────────────────
+# .env.example 은 템플릿이므로 커밋 대상
+.env
+.env.local
+.env.*.local
+front/.env.local
+front/.env.*.local
+back/.env
+back/.env.local
+back/.env.*.local
+
+# ── Node.js ──────────────────────────────────────────
+front/node_modules/
+back/node_modules/
+
+# ── 빌드 결과물 ──────────────────────────────────────
+front/dist/
+
+# ── TLS 인증서 / 키 ──────────────────────────────────
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# ── 임시 / 백업 파일 ──────────────────────────────────
+*.backup
+*.backup-*
+*.bak
+*.tmp
+
+# ── 로그 ─────────────────────────────────────────────
+*.log
+logs/
+
+# ── OS / 에디터 ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+.idea/

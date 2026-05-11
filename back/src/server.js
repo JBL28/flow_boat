@@ -1,0 +1,185 @@
+import { randomUUID } from "node:crypto";
+import http from "node:http";
+import { WebSocketServer, WebSocket } from "ws";
+
+const port = Number.parseInt(process.env.PORT ?? "3001", 10);
+const heartbeatIntervalMs = 10000;
+const heartbeatTimeoutMs = 30000;
+const maxTextLength = 500;
+const maxPayloadBytes = 2048;
+
+// Rate limiting: sliding window, max 3 messages per second
+const rateLimitWindowMs = 1000;
+const rateLimitMax = 3;
+
+// Connection limits
+const maxConnectionsTotal = 500;
+const maxConnectionsPerIp = 10;
+const ipConnectionCount = new Map();
+
+// Origin allowlist — set ALLOWED_ORIGINS=http://example.com,https://example.com in production
+const rawAllowedOrigins = process.env.ALLOWED_ORIGINS;
+const allowedOrigins = rawAllowedOrigins
+  ? new Set(rawAllowedOrigins.split(",").map((o) => o.trim()))
+  : null; // null = allow all (dev mode)
+
+const server = http.createServer((request, response) => {
+  if (request.url === "/health") {
+    response.writeHead(200, {
+      "content-type": "application/json",
+      "x-content-type-options": "nosniff",
+      "cache-control": "no-store",
+    });
+    response.end(JSON.stringify({ ok: true }));
+    return;
+  }
+
+  response.writeHead(404);
+  response.end();
+});
+
+const wss = new WebSocketServer({
+  server,
+  path: "/ws",
+  maxPayload: maxPayloadBytes,
+  verifyClient: ({ origin, req }, callback) => {
+    // Block cross-site WebSocket hijacking
+    if (allowedOrigins && origin && !allowedOrigins.has(origin)) {
+      callback(false, 403, "Forbidden origin");
+      return;
+    }
+
+    // Reject when server is overloaded
+    if (wss.clients.size >= maxConnectionsTotal) {
+      callback(false, 503, "Server overloaded");
+      return;
+    }
+
+    // Per-IP connection cap
+    const ip = req.socket.remoteAddress ?? "unknown";
+    const count = ipConnectionCount.get(ip) ?? 0;
+    if (count >= maxConnectionsPerIp) {
+      callback(false, 429, "Too many connections from your IP");
+      return;
+    }
+
+    callback(true);
+  },
+});
+
+function broadcast(payload) {
+  const data = JSON.stringify(payload);
+
+  for (const client of wss.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(data);
+    }
+  }
+}
+
+function parseMessage(rawMessage) {
+  try {
+    return JSON.parse(rawMessage.toString("utf8"));
+  } catch {
+    return null;
+  }
+}
+
+function sanitizeText(raw) {
+  return raw
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069]/g, "")
+    .normalize("NFC")
+    .trim()
+    .slice(0, maxTextLength);
+}
+
+wss.on("connection", (socket, request) => {
+  const ip = request.socket.remoteAddress ?? "unknown";
+  ipConnectionCount.set(ip, (ipConnectionCount.get(ip) ?? 0) + 1);
+
+  socket.lastPongAt = Date.now();
+  socket.messageTimestamps = [];
+
+  socket.on("pong", () => {
+    socket.lastPongAt = Date.now();
+  });
+
+  socket.on("close", () => {
+    const count = ipConnectionCount.get(ip) ?? 1;
+    if (count <= 1) {
+      ipConnectionCount.delete(ip);
+    } else {
+      ipConnectionCount.set(ip, count - 1);
+    }
+  });
+
+  socket.on("message", (rawMessage) => {
+    const now = Date.now();
+
+    // Sliding window rate limit: keep only timestamps within the last second
+    socket.messageTimestamps = socket.messageTimestamps.filter(
+      (t) => now - t < rateLimitWindowMs,
+    );
+
+    if (socket.messageTimestamps.length >= rateLimitMax) {
+      socket.send(
+        JSON.stringify({
+          type: "error",
+          code: "RATE_LIMITED",
+          message: "Messages can be sent at most 3 times per second.",
+        }),
+      );
+      return;
+    }
+
+    const message = parseMessage(rawMessage);
+    if (!message || typeof message !== "object") return;
+
+    const { type, text } = message;
+    if (type !== "boat:add" || typeof text !== "string") return;
+
+    const sanitized = sanitizeText(text);
+    if (!sanitized) return;
+
+    socket.messageTimestamps.push(now);
+
+    broadcast({
+      type: "boat:add",
+      id: randomUUID(),
+      text: sanitized,
+      createdAt: new Date().toISOString(),
+    });
+  });
+});
+
+const heartbeatTimer = setInterval(() => {
+  const now = Date.now();
+
+  for (const client of wss.clients) {
+    if (now - client.lastPongAt > heartbeatTimeoutMs) {
+      client.terminate();
+      continue;
+    }
+
+    if (client.readyState === WebSocket.OPEN) {
+      client.ping();
+    }
+  }
+}, heartbeatIntervalMs);
+
+wss.on("close", () => {
+  clearInterval(heartbeatTimer);
+});
+
+function shutdown() {
+  clearInterval(heartbeatTimer);
+  wss.close(() => server.close(() => process.exit(0)));
+}
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+
+server.listen(port, () => {
+  console.log(`flow realtime server listening on ws://localhost:${port}/ws`);
+});
