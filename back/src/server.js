@@ -16,12 +16,23 @@ const rateLimitMax = 3;
 const maxConnectionsTotal = 500;
 const maxConnectionsPerIp = 10;
 const ipConnectionCount = new Map();
+const ipMessageTimestamps = new Map();
 
 // Origin allowlist — set ALLOWED_ORIGINS=http://example.com,https://example.com in production
 const rawAllowedOrigins = process.env.ALLOWED_ORIGINS;
 const allowedOrigins = rawAllowedOrigins
   ? new Set(rawAllowedOrigins.split(",").map((o) => o.trim()))
   : null; // null = allow all (dev mode)
+
+// Prefer X-Real-IP set by Nginx proxy; fall back to socket address for local dev
+function getClientIp(req) {
+  return (
+    req.headers["x-real-ip"] ??
+    req.headers["x-forwarded-for"]?.split(",")[0].trim() ??
+    req.socket.remoteAddress ??
+    "unknown"
+  );
+}
 
 const server = http.createServer((request, response) => {
   if (request.url === "/health") {
@@ -43,8 +54,8 @@ const wss = new WebSocketServer({
   path: "/ws",
   maxPayload: maxPayloadBytes,
   verifyClient: ({ origin, req }, callback) => {
-    // Block cross-site WebSocket hijacking
-    if (allowedOrigins && origin && !allowedOrigins.has(origin)) {
+    // Block cross-site WebSocket hijacking — reject missing/unknown origin when allowlist is active
+    if (allowedOrigins && (!origin || !allowedOrigins.has(origin))) {
       callback(false, 403, "Forbidden origin");
       return;
     }
@@ -56,7 +67,7 @@ const wss = new WebSocketServer({
     }
 
     // Per-IP connection cap
-    const ip = req.socket.remoteAddress ?? "unknown";
+    const ip = getClientIp(req);
     const count = ipConnectionCount.get(ip) ?? 0;
     if (count >= maxConnectionsPerIp) {
       callback(false, 429, "Too many connections from your IP");
@@ -95,11 +106,10 @@ function sanitizeText(raw) {
 }
 
 wss.on("connection", (socket, request) => {
-  const ip = request.socket.remoteAddress ?? "unknown";
+  const ip = getClientIp(request);
   ipConnectionCount.set(ip, (ipConnectionCount.get(ip) ?? 0) + 1);
 
   socket.lastPongAt = Date.now();
-  socket.messageTimestamps = [];
 
   socket.on("pong", () => {
     socket.lastPongAt = Date.now();
@@ -109,6 +119,7 @@ wss.on("connection", (socket, request) => {
     const count = ipConnectionCount.get(ip) ?? 1;
     if (count <= 1) {
       ipConnectionCount.delete(ip);
+      ipMessageTimestamps.delete(ip);
     } else {
       ipConnectionCount.set(ip, count - 1);
     }
@@ -117,12 +128,12 @@ wss.on("connection", (socket, request) => {
   socket.on("message", (rawMessage) => {
     const now = Date.now();
 
-    // Sliding window rate limit: keep only timestamps within the last second
-    socket.messageTimestamps = socket.messageTimestamps.filter(
+    // Sliding window rate limit per IP — aggregates across all connections from same IP
+    const timestamps = (ipMessageTimestamps.get(ip) ?? []).filter(
       (t) => now - t < rateLimitWindowMs,
     );
 
-    if (socket.messageTimestamps.length >= rateLimitMax) {
+    if (timestamps.length >= rateLimitMax) {
       socket.send(
         JSON.stringify({
           type: "error",
@@ -142,7 +153,8 @@ wss.on("connection", (socket, request) => {
     const sanitized = sanitizeText(text);
     if (!sanitized) return;
 
-    socket.messageTimestamps.push(now);
+    timestamps.push(now);
+    ipMessageTimestamps.set(ip, timestamps);
 
     broadcast({
       type: "boat:add",
