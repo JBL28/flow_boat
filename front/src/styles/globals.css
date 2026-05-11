@@ -207,7 +207,6 @@ textarea:focus {
 
 .reed-layer-back {
   opacity: 0.46;
-  filter: blur(0.6px);
   transform: scaleX(-1);
   animation: reed-sway-back 7.8s ease-in-out infinite alternate;
 }
@@ -221,8 +220,7 @@ textarea:focus {
   inset: 48% 0 auto;
   z-index: 1;
   height: 8rem;
-  background: linear-gradient(90deg, transparent, rgba(240, 208, 96, 0.12), transparent);
-  filter: blur(12px);
+  background: linear-gradient(90deg, transparent, rgba(240, 208, 96, 0.15), transparent);
 }
 
 .water-layer {
@@ -235,6 +233,7 @@ textarea:focus {
   transform: translateX(-50%);
   user-select: none;
   animation: ripple 9s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .water-layer img {
