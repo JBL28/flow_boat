@@ -1,0 +1,11 @@
+# 로컬 빌드 전용 — 서버에서는 사용하지 않습니다.
+# 사용법: docker compose -f docker-compose.yml -f docker-compose.build.yml build
+services:
+  backend:
+    build: ./back
+
+  frontend:
+    build:
+      context: ./front
+      args:
+        VITE_WS_URL: "${VITE_WS_URL:-}"
