@@ -429,10 +429,10 @@ textarea:focus {
 }
 
 .hint-box {
-  position: absolute;
-  top: calc(100% + 0.6rem);
-  right: 0;
-  width: min(17rem, 80vw);
+  position: fixed;
+  top: 4.35rem;
+  right: 1rem;
+  width: min(17rem, calc(100vw - 2rem));
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 0.85rem 1rem;
@@ -446,12 +446,42 @@ textarea:focus {
   transform: translateY(-6px);
   transition: opacity 180ms ease, transform 180ms ease;
   white-space: normal;
+  z-index: 9;
 }
 
 .hint-wrap:hover .hint-box,
 .hint-wrap:focus-within .hint-box {
   opacity: 1;
   transform: translateY(0);
+}
+
+.github-channel {
+  display: grid;
+  gap: 0.35rem;
+  place-items: center;
+}
+
+.github-link {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(208, 216, 232, 0.24);
+  border-radius: 50%;
+  background: rgba(5, 15, 32, 0.72);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  text-decoration: none;
+}
+
+.github-link:focus-visible {
+  outline: 3px solid rgba(240, 208, 96, 0.4);
+  outline-offset: 3px;
+}
+
+.github-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: var(--color-text);
 }
 
 .speaker-icon {
@@ -526,6 +556,12 @@ textarea:focus {
     top: 0.75rem;
     right: 0.75rem;
     gap: 0.5rem;
+  }
+
+  .hint-box {
+    top: 4.1rem;
+    right: 0.75rem;
+    width: min(17rem, calc(100vw - 1.5rem));
   }
 
   .mountain-layer {
