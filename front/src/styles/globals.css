@@ -235,6 +235,7 @@ textarea:focus {
   user-select: none;
   animation: ripple 9s ease-in-out infinite alternate;
   will-change: transform;
+  filter: hue-rotate(30deg) saturate(0.78);
 }
 
 .water-layer img {
