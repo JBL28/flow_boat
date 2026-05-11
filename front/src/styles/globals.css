@@ -402,14 +402,6 @@ textarea:focus {
   outline-offset: 3px;
 }
 
-.sound-label {
-  max-width: 4.5rem;
-  color: rgba(208, 216, 232, 0.72);
-  font-size: 0.72rem;
-  line-height: 1;
-  text-align: center;
-}
-
 .hint-channel {
   display: grid;
   gap: 0.35rem;
@@ -452,18 +444,9 @@ textarea:focus {
   font-size: 0.88rem;
   line-height: 1.65;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-6px);
-  transition: opacity 180ms ease, transform 180ms ease;
   white-space: normal;
   z-index: 9;
-}
-
-.hint-wrap:hover .hint-box,
-.hint-wrap:focus-within .hint-box {
-  opacity: 1;
-  transform: translateY(0);
+  animation: star-box-in 180ms ease forwards;
 }
 
 .github-channel {

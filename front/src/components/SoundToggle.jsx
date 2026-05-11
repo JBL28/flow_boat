@@ -3,8 +3,11 @@ import { useRef, useState } from "react";
 function SoundToggle({ channels, todayCount, viewerCount }) {
   const audioRefs = useRef({});
   const [activeChannels, setActiveChannels] = useState({});
-  const [starOpen, setStarOpen] = useState(false);
-  const [viewerOpen, setViewerOpen] = useState(false);
+  const [activePanel, setActivePanel] = useState(null);
+
+  const togglePanel = (panel) => {
+    setActivePanel((currentPanel) => (currentPanel === panel ? null : panel));
+  };
 
   const toggleChannel = async (channel) => {
     const audio = audioRefs.current[channel.id];
@@ -37,14 +40,14 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
             type="button"
             className="star-toggle"
             aria-label="오늘의 배 현황"
-            aria-pressed={starOpen}
-            onClick={() => setStarOpen((v) => !v)}
+            aria-pressed={activePanel === "today"}
+            onClick={() => togglePanel("today")}
           >
             <svg className="star-icon star-icon-today" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
             </svg>
           </button>
-          {starOpen && (
+          {activePanel === "today" && (
             <div className="star-box" role="status">
               오늘 <strong>{todayCount}</strong>개의 배가 지나갔습니다.
             </div>
@@ -55,14 +58,14 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
             type="button"
             className="star-toggle"
             aria-label="현재 함께 구경하는 사람 수"
-            aria-pressed={viewerOpen}
-            onClick={() => setViewerOpen((v) => !v)}
+            aria-pressed={activePanel === "viewers"}
+            onClick={() => togglePanel("viewers")}
           >
             <svg className="star-icon star-icon-viewers" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
             </svg>
           </button>
-          {viewerOpen && (
+          {activePanel === "viewers" && (
             <div className="star-box viewer-box" role="status">
               <strong>{viewerCount}</strong>명이 함께 강을 구경하고 있습니다.
             </div>
@@ -85,14 +88,22 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
         </div>
         <div className="hint-channel">
           <div className="hint-wrap">
-            <button type="button" className="hint-toggle" aria-label="서비스 안내">
+            <button
+              type="button"
+              className="hint-toggle"
+              aria-label="서비스 안내"
+              aria-pressed={activePanel === "hint"}
+              onClick={() => togglePanel("hint")}
+            >
               ?
             </button>
-            <div className="hint-box" role="tooltip">
-              서버에 메시지는 남지 않습니다.
-              <br />
-              지금 드는 생각을, 그저 흘려보내세요.
-            </div>
+            {activePanel === "hint" && (
+              <div className="hint-box" role="tooltip">
+                서버에 메시지는 남지 않습니다.
+                <br />
+                지금 드는 생각을, 그저 흘려보내세요.
+              </div>
+            )}
           </div>
         </div>
         {channels.map((channel) => {
