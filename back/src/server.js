@@ -110,6 +110,13 @@ function broadcast(payload) {
   }
 }
 
+function broadcastViewerCount() {
+  broadcast({
+    type: "viewer:count",
+    count: wss.clients.size,
+  });
+}
+
 function parseMessage(rawMessage) {
   try {
     return JSON.parse(rawMessage.toString("utf8"));
@@ -141,6 +148,15 @@ wss.on("connection", (socket, request) => {
     }),
   );
 
+  socket.send(
+    JSON.stringify({
+      type: "viewer:count",
+      count: wss.clients.size,
+    }),
+  );
+
+  broadcastViewerCount();
+
   socket.on("pong", () => {
     socket.lastPongAt = Date.now();
   });
@@ -153,6 +169,8 @@ wss.on("connection", (socket, request) => {
     } else {
       ipConnectionCount.set(ip, count - 1);
     }
+
+    broadcastViewerCount();
   });
 
   socket.on("message", (rawMessage) => {

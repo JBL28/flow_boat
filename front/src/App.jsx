@@ -22,6 +22,7 @@ function App() {
   const [worryText, setWorryText] = useState("");
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [todayBoatCount, setTodayBoatCount] = useState(0);
+  const [viewerCount, setViewerCount] = useState(0);
   const nextBoatId = useRef(0);
   const timersRef = useRef([]);
   const socketRef = useRef(null);
@@ -115,6 +116,11 @@ function App() {
 
           if (message.type === "boat:count" && Number.isFinite(message.count)) {
             setTodayBoatCount(message.count);
+            return;
+          }
+
+          if (message.type === "viewer:count" && Number.isFinite(message.count)) {
+            setViewerCount(message.count);
           }
         } catch {
           // Ignore malformed realtime messages.
@@ -144,6 +150,7 @@ function App() {
           { id: "music", label: "음악", src: musicSrc, volume: 0.38 },
         ]}
         todayCount={todayBoatCount}
+        viewerCount={viewerCount}
       />
       <SkySection
         worryText={worryText}
