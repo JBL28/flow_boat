@@ -1,5 +1,8 @@
 import { useRef, useState } from "react";
 
+/**
+ * Floating controls for counts, help text, GitHub, and independent audio layers.
+ */
 function SoundToggle({ channels, todayCount, viewerCount }) {
   const audioRefs = useRef({});
   const [activeChannels, setActiveChannels] = useState({});
@@ -9,6 +12,9 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
     setActivePanel((currentPanel) => (currentPanel === panel ? null : panel));
   };
 
+  /**
+   * Toggle one browser audio element after a user gesture.
+   */
   const toggleChannel = async (channel) => {
     const audio = audioRefs.current[channel.id];
     if (!audio) return;

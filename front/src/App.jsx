@@ -6,14 +6,17 @@ import ambienceSrc from "../resources/sound/ambience.mp3";
 import musicSrc from "../resources/sound/song.mp3";
 
 const boatLifetimeMs = 49500;
-// || (not ??) so that VITE_WS_URL="" also falls through to the auto-derived URL.
-// window.location.host includes the port for non-standard ports, which is correct
-// behind the Nginx proxy where /ws is on the same origin as the page.
+/**
+ * WebSocket URL used by the browser.
+ *
+ * An empty VITE_WS_URL should still fall through to the same-origin /ws proxy,
+ * so this deliberately uses || instead of ??.
+ */
 const wsUrl =
   import.meta.env.VITE_WS_URL ||
   `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
 
-// Client-side rate limit: max 3 sends per second (mirrors server rule)
+// Mirrors the backend rule to keep the button responsive before the server rejects a burst.
 const clientRateLimitWindowMs = 1000;
 const clientRateLimitMax = 3;
 
@@ -34,6 +37,12 @@ function App() {
     setBoats((currentBoats) => currentBoats.filter((boat) => boat.id !== boatId));
   }, []);
 
+  /**
+   * Add a boat to the local animation queue.
+   *
+   * Server-delivered messages pass a stable UUID. Offline/local fallback boats
+   * get a temporary id but follow the same visual path.
+   */
   const addBoat = useCallback(
     (text, messageId) => {
       const sequence = nextBoatId.current;
@@ -60,7 +69,7 @@ function App() {
 
     const now = Date.now();
 
-    // Sliding window: drop timestamps older than 1 second
+    // Sliding window: drop timestamps older than 1 second.
     sendTimestampsRef.current = sendTimestampsRef.current.filter(
       (t) => now - t < clientRateLimitWindowMs,
     );
@@ -99,6 +108,9 @@ function App() {
   useEffect(() => {
     let shouldReconnect = true;
 
+    /**
+     * Open the realtime channel and keep all server-owned counters in sync.
+     */
     const connect = () => {
       const socket = new WebSocket(wsUrl);
       socketRef.current = socket;

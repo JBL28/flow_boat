@@ -6,6 +6,9 @@ const rippleLayers = {
   front: waterFrontLayer,
 };
 
+/**
+ * Render one of the layered water textures that create depth around the boats.
+ */
 function WaterRipple({ layer = "back" }) {
   return (
     <div className={`water-layer water-layer-${layer}`} aria-hidden="true">

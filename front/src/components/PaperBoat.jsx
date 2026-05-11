@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import paperBoatSrc from "../../resources/images/paper-boat.png";
 
+/**
+ * Animate a single note-carrying boat across the river.
+ *
+ * The parent chooses lane, scale, and drift so multiple boats feel varied while
+ * keeping the route predictable across viewport sizes.
+ */
 function PaperBoat({ boat }) {
   return (
     <motion.div

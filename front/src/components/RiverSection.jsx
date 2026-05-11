@@ -3,6 +3,9 @@ import PaperBoat from "./PaperBoat.jsx";
 import mountainLayer from "../../resources/images/mountain-shore-layer.png";
 import reedLayer from "../../resources/images/reed-layer.png";
 
+/**
+ * Render the river stage where transient boat messages pass through.
+ */
 function RiverSection({ boats }) {
   return (
     <section className="river-section" aria-label="종이배가 흘러가는 강물 영역">

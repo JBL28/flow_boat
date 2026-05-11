@@ -1,3 +1,6 @@
+/**
+ * Input section for writing the thought that will become a paper boat.
+ */
 function SkySection({ worryText, setWorryText, canSend, onSend }) {
   const handleKeyDown = (event) => {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;

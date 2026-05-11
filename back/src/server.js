@@ -26,7 +26,12 @@ const allowedOrigins = rawAllowedOrigins
   ? new Set(rawAllowedOrigins.split(",").map((o) => o.trim()))
   : null; // null = allow all (dev mode)
 
-// Prefer X-Real-IP set by Nginx proxy; fall back to socket address for local dev
+/**
+ * Resolve the client IP used for connection caps and rate limiting.
+ *
+ * Nginx supplies X-Real-IP in Docker/production; local development falls back
+ * to the direct socket address.
+ */
 function getClientIp(req) {
   return (
     req.headers["x-real-ip"] ??
@@ -36,10 +41,19 @@ function getClientIp(req) {
   );
 }
 
+/**
+ * Return the UTC calendar key for daily counts.
+ *
+ * The count is intentionally in-memory: it resets on date change or process
+ * restart, and message text is never persisted.
+ */
 function getTodayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
+/**
+ * Read today's boat count, resetting the in-memory counter when the day rolls over.
+ */
 function getTodayBoatCount() {
   const currentKey = getTodayKey();
   if (currentKey !== todayCountKey) {
@@ -50,6 +64,9 @@ function getTodayBoatCount() {
   return todayBoatCount;
 }
 
+/**
+ * Increment and return the backend-owned daily boat count.
+ */
 function incrementTodayBoatCount() {
   getTodayBoatCount();
   todayBoatCount += 1;
@@ -76,7 +93,7 @@ const wss = new WebSocketServer({
   path: "/ws",
   maxPayload: maxPayloadBytes,
   verifyClient: ({ origin, req }, callback) => {
-    // Block cross-site WebSocket hijacking — reject missing/unknown origin when allowlist is active
+    // Reject cross-site WebSocket hijacking attempts when production origins are configured.
     if (allowedOrigins && (!origin || !allowedOrigins.has(origin))) {
       callback(false, 403, "Forbidden origin");
       return;
@@ -100,6 +117,11 @@ const wss = new WebSocketServer({
   },
 });
 
+/**
+ * Broadcast a realtime protocol message to every currently open WebSocket.
+ *
+ * Payloads are transient; this server does not store boat messages after send.
+ */
 function broadcast(payload) {
   const data = JSON.stringify(payload);
 
@@ -110,6 +132,9 @@ function broadcast(payload) {
   }
 }
 
+/**
+ * Publish the number of currently connected WebSocket clients.
+ */
 function broadcastViewerCount() {
   broadcast({
     type: "viewer:count",
@@ -117,6 +142,12 @@ function broadcastViewerCount() {
   });
 }
 
+/**
+ * Parse an incoming WebSocket payload as JSON.
+ *
+ * Malformed client messages are ignored instead of logged, so user-entered
+ * text does not leak into server logs.
+ */
 function parseMessage(rawMessage) {
   try {
     return JSON.parse(rawMessage.toString("utf8"));
@@ -125,6 +156,12 @@ function parseMessage(rawMessage) {
   }
 }
 
+/**
+ * Normalize user text before broadcasting it to connected clients.
+ *
+ * Control and directional formatting characters are stripped to avoid invisible
+ * payload tricks, then text is capped to the public UI limit.
+ */
 function sanitizeText(raw) {
   return raw
     .replace(/[\u0000-\u001F\u007F]/g, "")
