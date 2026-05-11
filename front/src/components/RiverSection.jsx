@@ -17,7 +17,7 @@ function RiverSection({ boats }) {
         <img className="reed-layer reed-layer-back" src={reedLayer} alt="" loading="lazy" />
         <img className="reed-layer reed-layer-front" src={reedLayer} alt="" loading="lazy" />
       </div>
-      <p className="river-copyright">Open source project by JBL28.</p>
+      <p className="river-copyright">Open source on GitHub · JBL28</p>
     </section>
   );
 }
