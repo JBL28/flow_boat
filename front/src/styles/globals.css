@@ -65,18 +65,38 @@ button:disabled {
   height: 100dvh;
   min-height: 0;
   overflow: hidden;
+  background: #020812;
+}
+
+.scene-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity var(--scene-transition-duration, 70s) linear;
+}
+
+.scene-sky-day {
+  opacity: var(--scene-day-opacity, 0);
+  background:
+    radial-gradient(circle at 76% 14%, rgba(255, 246, 196, 0.18) 0 3.2rem, transparent 7.5rem),
+    linear-gradient(180deg, #5daee2 0%, #79c5ef 38%, #b8e5f4 56%, #247894 78%, #0d2f3a 100%);
+}
+
+.scene-sky-twilight {
+  opacity: var(--scene-twilight-opacity, 0);
+  background:
+    radial-gradient(circle at 76% 18%, rgba(255, 224, 132, 0.56), transparent 14rem),
+    radial-gradient(ellipse at 50% 58%, rgba(255, 184, 74, 0.42), transparent 34rem),
+    linear-gradient(180deg, #314f83 0%, #ef995a 38%, #ffc86d 56%, #f09645 69%, #304050 100%);
+}
+
+.scene-sky-night {
+  opacity: var(--scene-night-opacity, 1);
   background:
     radial-gradient(circle at 78% 13%, rgba(240, 208, 96, 0.13), transparent 11rem),
     radial-gradient(ellipse at 50% 43%, rgba(31, 95, 130, 0.34), transparent 36rem),
-    linear-gradient(
-      180deg,
-      var(--color-sky-deep) 0%,
-      #04122a 24%,
-      var(--color-sky) 46%,
-      var(--color-sky-horizon) 56%,
-      #061923 76%,
-      #020812 100%
-    );
+    linear-gradient(180deg, var(--color-sky-deep) 0%, #04122a 24%, var(--color-sky) 46%, var(--color-sky-horizon) 56%, #061923 76%, #020812 100%);
 }
 
 .sky-section,
@@ -181,7 +201,7 @@ textarea:focus {
   min-height: 0;
   align-items: start;
   padding: 2rem 1.25rem 3rem;
-  background: linear-gradient(180deg, rgba(18, 63, 98, 0.82) 0%, #061923 48%, #020812 100%);
+  background: transparent;
   z-index: 1;
 }
 
@@ -229,6 +249,11 @@ textarea:focus {
   will-change: transform;
 }
 
+.scene-fade-layer {
+  transition: opacity var(--scene-transition-duration, 70s) linear;
+  will-change: opacity;
+}
+
 .reed-layer-back {
   opacity: 0.46;
   transform: scaleX(-1);
@@ -244,8 +269,17 @@ textarea:focus {
   inset: 48% 0 auto;
   z-index: 1;
   height: 8rem;
-  background: linear-gradient(90deg, transparent, rgba(240, 208, 96, 0.12), transparent);
-  filter: blur(4px);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--scene-river-shine-rgb, 92, 145, 210), 0.025) 30%,
+      rgba(var(--scene-river-shine-rgb, 92, 145, 210), 0.10) 50%,
+      rgba(var(--scene-river-shine-rgb, 92, 145, 210), 0.025) 70%,
+      transparent 100%
+    );
+  opacity: var(--scene-river-shine-opacity, 1);
+  transition: opacity var(--scene-transition-duration, 70s) linear;
 }
 
 .water-layer {
@@ -258,8 +292,8 @@ textarea:focus {
   transform: translateX(-50%);
   user-select: none;
   animation: ripple 9s ease-in-out infinite alternate;
-  will-change: transform;
-  filter: hue-rotate(30deg) saturate(0.78);
+  will-change: transform, opacity;
+  transition: opacity var(--scene-transition-duration, 70s) linear;
 }
 
 .water-layer img {
@@ -275,6 +309,8 @@ textarea:focus {
   z-index: 1;
   height: 47%;
   opacity: 0.98;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.55) 22%, #000 44%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.55) 22%, #000 44%);
 }
 
 .water-layer-front {
@@ -476,6 +512,13 @@ textarea:focus {
   place-items: center;
 }
 
+.scene-auto-channel {
+  display: grid;
+  gap: 0.35rem;
+  place-items: center;
+}
+
+.scene-auto-toggle,
 .github-link {
   display: grid;
   place-items: center;
@@ -488,6 +531,15 @@ textarea:focus {
   text-decoration: none;
 }
 
+.scene-auto-toggle {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border-color: rgba(240, 208, 96, 0.55);
+  color: #f0d060;
+}
+
+.scene-auto-toggle:focus-visible,
 .github-link:focus-visible {
   outline: 3px solid rgba(240, 208, 96, 0.4);
   outline-offset: 3px;
@@ -911,7 +963,9 @@ textarea:focus {
   position: absolute;
   inset: 0;
   z-index: 0;
+  opacity: var(--scene-stars-opacity, 1);
   pointer-events: none;
+  transition: opacity var(--scene-transition-duration, 70s) linear;
 }
 
 .starfield-dot {
@@ -946,7 +1000,9 @@ textarea:focus {
     0 0 55px 22px rgba(240, 208, 96, 0.10);
   animation: moon-float 9s ease-in-out infinite alternate;
   will-change: transform;
+  opacity: var(--scene-moon-opacity, 1);
   pointer-events: none;
+  transition: opacity var(--scene-transition-duration, 70s) linear;
 }
 
 @keyframes moon-float {
@@ -960,7 +1016,9 @@ textarea:focus {
   position: absolute;
   inset: 0;
   z-index: 3;
+  opacity: var(--scene-firefly-opacity, 1);
   pointer-events: none;
+  transition: opacity var(--scene-transition-duration, 70s) linear;
 }
 
 .firefly {

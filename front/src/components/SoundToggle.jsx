@@ -1,9 +1,24 @@
 import { useRef, useState } from "react";
 
 /**
- * Floating controls for counts, help text, GitHub, and independent audio layers.
+ * 우상단 플로팅 컨트롤 모음.
+ *
+ * 포함 항목:
+ *  - 오늘 배 수 / 시청자 수 팝업 (좌상단 별 아이콘)
+ *  - 씬 수동 고정 해제 버튼 (수동 모드일 때만 표시)
+ *  - GitHub 링크
+ *  - 서비스 안내 팝업
+ *  - 엠비언스 / 음악 토글 (각 채널 독립)
+ *
+ * @param {{
+ *   channels: Array<{ id: string, label: string, src: string, volume: number }>,
+ *   todayCount: number,
+ *   viewerCount: number,
+ *   isManualScene: boolean,
+ *   onUseTimeScene: () => void,
+ * }} props
  */
-function SoundToggle({ channels, todayCount, viewerCount }) {
+function SoundToggle({ channels, todayCount, viewerCount, isManualScene, onUseTimeScene }) {
   const audioRefs = useRef({});
   const [activeChannels, setActiveChannels] = useState({});
   const [activePanel, setActivePanel] = useState(null);
@@ -13,7 +28,9 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
   };
 
   /**
-   * Toggle one browser audio element after a user gesture.
+   * 사용자 제스처 이후 브라우저 오디오 요소를 재생/일시정지 토글한다.
+   *
+   * @param {{ id: string, volume: number }} channel
    */
   const toggleChannel = async (channel) => {
     const audio = audioRefs.current[channel.id];
@@ -79,6 +96,18 @@ function SoundToggle({ channels, todayCount, viewerCount }) {
         </div>
       </div>
       <div className="sound-controls" aria-label="사운드 설정">
+        {isManualScene && (
+          <div className="scene-auto-channel">
+            <button
+              type="button"
+              className="scene-auto-toggle"
+              aria-label="시간 기반 배경으로 돌아가기"
+              onClick={onUseTimeScene}
+            >
+              OFF
+            </button>
+          </div>
+        )}
         <div className="github-channel">
           <a
             href="https://github.com/JBL28/flow_boat"
