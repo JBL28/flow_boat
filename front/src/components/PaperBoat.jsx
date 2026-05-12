@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import paperBoatSrc from "../../resources/images/paper-boat.png";
+import nyanCatSrc from "../../resources/images/nyan-cat.gif";
 
 /**
  * Animate a single note-carrying boat across the river.
@@ -8,6 +9,34 @@ import paperBoatSrc from "../../resources/images/paper-boat.png";
  * keeping the route predictable across viewport sizes.
  */
 function PaperBoat({ boat }) {
+  if (boat.isNyan) {
+    return (
+      <motion.div
+        className="boat-track"
+        style={{ willChange: "transform, opacity" }}
+        initial={{ x: "-62vw", y: boat.lane, opacity: 0 }}
+        animate={{
+          x: "64vw",
+          y: boat.lane,
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{
+          x: { duration: 48, ease: "linear" },
+          y: { duration: 48, ease: "linear" },
+          opacity: { duration: 48, times: [0, 0.04, 0.96, 1], ease: "linear" },
+        }}
+      >
+        <div className="boat-wrap" tabIndex={0}>
+          <img className="nyan-cat" src={nyanCatSrc} alt="냥캣" draggable="false" />
+          <div className="boat-note">
+            <strong>고양이의 생각</strong>
+            <span>{boat.text}</span>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       className="boat-track"

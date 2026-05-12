@@ -51,6 +51,7 @@ function App() {
       const boat = {
         id: messageId ?? `local-${sequence}`,
         text,
+        isNyan: /냥|nyan|야옹/i.test(text),
         lane: (sequence % 5) * 4 - 8,
         scale: 0.72 + (sequence % 3) * 0.045,
         drift: sequence % 2 === 0 ? -3 : 4,

@@ -306,6 +306,14 @@ textarea:focus {
   user-select: none;
 }
 
+.nyan-cat {
+  display: block;
+  height: clamp(56px, 9vh, 88px);
+  width: auto;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
 .boat-base,
 .boat-fold {
   fill: var(--color-boat);
