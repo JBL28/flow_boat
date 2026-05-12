@@ -1,8 +1,8 @@
 import WaterRipple from "./WaterRipple.jsx";
 import PaperBoat from "./PaperBoat.jsx";
 import Fireflies from "./Fireflies.jsx";
-import mountainLayer from "../../resources/images/mountain-shore-layer.png";
-import reedLayer from "../../resources/images/reed-layer.png";
+import mountainLayer from "../../resources/images/mountain-land-layer.webp";
+import reedLayer from "../../resources/images/reed-layer.webp";
 
 /**
  * River stage that renders the animated scene and all live boat messages.

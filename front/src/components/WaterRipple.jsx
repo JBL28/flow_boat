@@ -1,5 +1,5 @@
-import waterBackLayer from "../../resources/images/water-back-layer.png";
-import waterFrontLayer from "../../resources/images/water-front-layer.png";
+import waterBackLayer from "../../resources/images/water-back-layer.webp";
+import waterFrontLayer from "../../resources/images/water-front-layer.webp";
 
 const rippleLayers = {
   back: waterBackLayer,

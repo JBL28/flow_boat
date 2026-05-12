@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import paperBoatSrc from "../../resources/images/paper-boat.png";
+import paperBoatSrc from "../../resources/images/paper-boat.webp";
 import nyanCatSrc from "../../resources/images/nyan-cat.gif";
 
 /**

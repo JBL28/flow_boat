@@ -6,8 +6,9 @@
 @tailwind utilities;
 
 :root {
-  --color-sky: #000d25;
-  --color-sky-deep: #000d25;
+  --color-sky: #082a4d;
+  --color-sky-deep: #020716;
+  --color-sky-horizon: #123f62;
   --color-river: #0a2a3a;
   --color-river-light: #174a55;
   --color-boat: #f5f0e8;
@@ -64,7 +65,18 @@ button:disabled {
   height: 100dvh;
   min-height: 0;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--color-sky-deep) 0%, var(--color-sky) 52%, #061923 100%);
+  background:
+    radial-gradient(circle at 78% 13%, rgba(240, 208, 96, 0.13), transparent 11rem),
+    radial-gradient(ellipse at 50% 43%, rgba(31, 95, 130, 0.34), transparent 36rem),
+    linear-gradient(
+      180deg,
+      var(--color-sky-deep) 0%,
+      #04122a 24%,
+      var(--color-sky) 46%,
+      var(--color-sky-horizon) 56%,
+      #061923 76%,
+      #020812 100%
+    );
 }
 
 .sky-section,
@@ -77,14 +89,11 @@ button:disabled {
 .sky-section {
   min-height: 0;
   padding: clamp(2.5rem, 6dvh, 4rem) 1.25rem clamp(1rem, 3dvh, 2rem);
-  /* Elevate sky-section above the mountain layer (z-index:0) and reed layer
-     (z-index:6) so stars are always visible above the mountain overflow. */
-  z-index: 7;
 }
 
 .sky-content {
   position: relative;
-  z-index: 2;
+  z-index: 8;
   width: min(680px, 100%);
   text-align: center;
 }
@@ -172,7 +181,8 @@ textarea:focus {
   min-height: 0;
   align-items: start;
   padding: 2rem 1.25rem 3rem;
-  background: #000d25;
+  background: linear-gradient(180deg, rgba(18, 63, 98, 0.82) 0%, #061923 48%, #020812 100%);
+  z-index: 1;
 }
 
 .mountain-layer,
@@ -900,6 +910,7 @@ textarea:focus {
 .starfield {
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
 
