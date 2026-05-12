@@ -5,7 +5,12 @@ import mountainLayer from "../../resources/images/mountain-shore-layer.png";
 import reedLayer from "../../resources/images/reed-layer.png";
 
 /**
- * Render the river stage where transient boat messages pass through.
+ * River stage that renders the animated scene and all live boat messages.
+ *
+ * Layer order (z-index, low → high):
+ *   mountain-layer (0) → Fireflies (3) → boats (4) → water-front (5) → reeds (6)
+ *
+ * @param {{ boats: Array<{id: string, text: string, isNyan: boolean, lane: number, scale: number, drift: number}> }} props
  */
 function RiverSection({ boats }) {
   return (

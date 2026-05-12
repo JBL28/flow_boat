@@ -1,6 +1,15 @@
+/**
+ * Decorative star field rendered in the sky section.
+ *
+ * Each star's position, size, and twinkle timing are randomised once at module
+ * load so the layout is stable across re-renders. Responsive CSS hides excess
+ * stars on narrow or short viewports to keep GPU layer counts low.
+ */
+
+// Computed once at module load — identical on every render, no layout thrash.
 const STARS = Array.from({ length: 90 }, (_, i) => ({
   id: i,
-  top: Math.random() * 50,
+  top: Math.random() * 50,   // upper 50 % keeps stars above the mountain horizon
   left: Math.random() * 100,
   size: 2 + Math.random() * 1.5,
   delay: Math.random() * 7,

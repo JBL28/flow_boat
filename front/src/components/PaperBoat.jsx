@@ -7,6 +7,19 @@ import nyanCatSrc from "../../resources/images/nyan-cat.gif";
  *
  * The parent chooses lane, scale, and drift so multiple boats feel varied while
  * keeping the route predictable across viewport sizes.
+ *
+ * Easter egg: when `boat.isNyan` is true (text contains '냥', 'nyan', or '야옹')
+ * the paper boat is replaced with a nyan-cat GIF. The cat uses strictly linear
+ * easing on x/y so it maintains a constant speed with no acceleration.
+ *
+ * @param {{ boat: {
+ *   id: string,
+ *   text: string,
+ *   isNyan: boolean,
+ *   lane: number,
+ *   scale: number,
+ *   drift: number,
+ * }}} props
  */
 function PaperBoat({ boat }) {
   if (boat.isNyan) {
@@ -21,6 +34,8 @@ function PaperBoat({ boat }) {
           opacity: [0, 1, 1, 0],
         }}
         transition={{
+          // Per-property easing: linear on position for constant speed,
+          // custom times on opacity for a quick fade-in/out at the edges.
           x: { duration: 48, ease: "linear" },
           y: { duration: 48, ease: "linear" },
           opacity: { duration: 48, times: [0, 0.04, 0.96, 1], ease: "linear" },

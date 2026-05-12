@@ -2,7 +2,18 @@ import StarField from "./StarField.jsx";
 import Moon from "./Moon.jsx";
 
 /**
- * Input section for writing the thought that will become a paper boat.
+ * Night-sky section containing the message input UI and decorative atmosphere.
+ *
+ * Decorative layers (StarField, Moon) are rendered behind the content at
+ * z-index 0/1. The section itself sits at z-index 7 so the stars remain
+ * visible above the mountain image that bleeds upward from the river section.
+ *
+ * @param {{
+ *   worryText: string,
+ *   setWorryText: (text: string) => void,
+ *   canSend: boolean,
+ *   onSend: () => void,
+ * }} props
  */
 function SkySection({ worryText, setWorryText, canSend, onSend }) {
   const handleKeyDown = (event) => {

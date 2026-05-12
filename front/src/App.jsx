@@ -51,6 +51,8 @@ function App() {
       const boat = {
         id: messageId ?? `local-${sequence}`,
         text,
+        // Evaluated client-side from the server-broadcast text so all viewers
+        // see the nyan cat simultaneously without any server-side changes.
         isNyan: /냥|nyan|야옹/i.test(text),
         lane: (sequence % 5) * 4 - 8,
         scale: 0.72 + (sequence % 3) * 0.045,
