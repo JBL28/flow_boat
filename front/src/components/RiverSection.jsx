@@ -1,5 +1,6 @@
 import WaterRipple from "./WaterRipple.jsx";
 import PaperBoat from "./PaperBoat.jsx";
+import Fireflies from "./Fireflies.jsx";
 import mountainLayer from "../../resources/images/mountain-shore-layer.png";
 import reedLayer from "../../resources/images/reed-layer.png";
 
@@ -10,6 +11,7 @@ function RiverSection({ boats }) {
   return (
     <section className="river-section" aria-label="종이배가 흘러가는 강물 영역">
       <img className="mountain-layer" src={mountainLayer} alt="" aria-hidden="true" loading="lazy" />
+      <Fireflies />
       <WaterRipple layer="back" />
       <div className="river-shine" />
       {boats.map((boat) => (

@@ -77,6 +77,9 @@ button:disabled {
 .sky-section {
   min-height: 0;
   padding: clamp(2.5rem, 6dvh, 4rem) 1.25rem clamp(1rem, 3dvh, 2rem);
+  /* Elevate sky-section above the mountain layer (z-index:0) and reed layer
+     (z-index:6) so stars are always visible above the mountain overflow. */
+  z-index: 7;
 }
 
 .sky-content {
@@ -882,6 +885,129 @@ textarea:focus {
   .reed-field {
     width: 222vw;
   }
+}
+
+/* ─── StarField ─────────────────────────────────────────────────────────── */
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.starfield-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 3px 1px rgba(255, 255, 255, 0.45);
+  opacity: 0.8;
+  animation-name: star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.8; }
+  50%       { opacity: 0.08; }
+}
+
+/* ─── Moon ───────────────────────────────────────────────────────────────── */
+
+.moon {
+  position: absolute;
+  top: 8%;
+  right: 20%;
+  z-index: 1;
+  width: clamp(38px, 4.5vw, 62px);
+  height: clamp(38px, 4.5vw, 62px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #fffce8, #f0d060 56%, #c8a830 100%);
+  box-shadow:
+    0 0 18px 7px rgba(240, 208, 96, 0.28),
+    0 0 55px 22px rgba(240, 208, 96, 0.10);
+  animation: moon-float 9s ease-in-out infinite alternate;
+  will-change: transform;
+  pointer-events: none;
+}
+
+@keyframes moon-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-10px); }
+}
+
+/* ─── Fireflies ──────────────────────────────────────────────────────────── */
+
+.firefly-field {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.firefly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #b8ffaa;
+  box-shadow:
+    0 0 5px 2px rgba(140, 255, 100, 0.75),
+    0 0 12px 5px rgba(140, 255, 100, 0.28);
+  animation-name: firefly-blink, firefly-float-1;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+}
+
+.firefly-v2 { animation-name: firefly-blink, firefly-float-2; }
+.firefly-v3 { animation-name: firefly-blink, firefly-float-3; }
+
+@keyframes firefly-blink {
+  0%, 100% { opacity: 0.85; }
+  45%       { opacity: 0.08; }
+  55%       { opacity: 0.75; }
+}
+
+@keyframes firefly-float-1 {
+  0%   { transform: translate(0px,   0px); }
+  20%  { transform: translate(16px, -22px); }
+  45%  { transform: translate(-10px, -42px); }
+  70%  { transform: translate(22px,  -16px); }
+  100% { transform: translate(0px,   0px); }
+}
+
+@keyframes firefly-float-2 {
+  0%   { transform: translate(0px,   0px); }
+  30%  { transform: translate(-20px, -32px); }
+  55%  { transform: translate(13px,  -50px); }
+  80%  { transform: translate(-7px,  -20px); }
+  100% { transform: translate(0px,   0px); }
+}
+
+@keyframes firefly-float-3 {
+  0%   { transform: translate(0px,   0px); }
+  25%  { transform: translate(28px,  -18px); }
+  50%  { transform: translate(8px,   -38px); }
+  75%  { transform: translate(-16px, -14px); }
+  100% { transform: translate(0px,   0px); }
+}
+
+/* ─── Responsive overrides ───────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .starfield-dot:nth-child(n + 36) { display: none; }
+  .moon { top: 10%; right: 18%; width: 38px; height: 38px; }
+  .firefly:nth-child(n + 7) { display: none; }
+}
+
+@media (max-width: 720px) and (max-height: 680px) {
+  .moon { width: 28px; height: 28px; }
+  .starfield-dot:nth-child(n + 26) { display: none; }
+}
+
+@media (max-width: 720px) and (max-height: 600px) {
+  .moon { display: none; }
+  .starfield-dot:nth-child(n + 20) { display: none; }
+  .firefly:nth-child(n + 5) { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

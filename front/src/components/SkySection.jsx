@@ -1,3 +1,6 @@
+import StarField from "./StarField.jsx";
+import Moon from "./Moon.jsx";
+
 /**
  * Input section for writing the thought that will become a paper boat.
  */
@@ -11,6 +14,8 @@ function SkySection({ worryText, setWorryText, canSend, onSend }) {
 
   return (
     <section className="sky-section" aria-label="걱정을 적는 밤하늘 영역">
+      <StarField />
+      <Moon />
       <div className="sky-content">
         <p className="eyebrow">지금, 당신의 생각을</p>
         <h1>흘려보내다</h1>
