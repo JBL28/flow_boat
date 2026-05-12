@@ -232,6 +232,10 @@ textarea:focus {
   max-width: none;
   z-index: 0;
   opacity: 0.98;
+  /* 산봉우리 상단 알파 전환 구간(이미지 높이 47~60%)의 어두운 픽셀이
+     하늘 배경 위에서 검은 그림자처럼 보이는 현상 완화 */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 55%, #000 65%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 55%, #000 65%);
 }
 
 .reed-field {
