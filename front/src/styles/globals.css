@@ -78,15 +78,12 @@ button:disabled {
 
 .scene-sky-day {
   opacity: var(--scene-day-opacity, 0);
-  background:
-    radial-gradient(circle at 76% 14%, rgba(255, 246, 196, 0.18) 0 3.2rem, transparent 7.5rem),
-    linear-gradient(180deg, #5daee2 0%, #79c5ef 38%, #b8e5f4 56%, #247894 78%, #0d2f3a 100%);
+  background: linear-gradient(180deg, #5daee2 0%, #79c5ef 38%, #b8e5f4 56%, #247894 78%, #0d2f3a 100%);
 }
 
 .scene-sky-twilight {
   opacity: var(--scene-twilight-opacity, 0);
   background:
-    radial-gradient(circle at 76% 18%, rgba(255, 224, 132, 0.56), transparent 14rem),
     radial-gradient(ellipse at 50% 58%, rgba(255, 184, 74, 0.42), transparent 34rem),
     linear-gradient(180deg, #314f83 0%, #ef995a 38%, #ffc86d 56%, #f09645 69%, #304050 100%);
 }
