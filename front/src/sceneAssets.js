@@ -22,8 +22,15 @@ function imageUrl(fileName) {
 }
 
 const responsiveLayerSizes = "(max-width: 720px) 80vw, 100vw";
+const responsiveReedSizes = [
+  "(max-width: 720px) and (max-height: 600px) 222vw",
+  "(max-width: 720px) and (max-height: 680px) 205vw",
+  "(max-width: 720px) and (max-height: 780px) 188vw",
+  "(max-width: 720px) 170vw",
+  "100vw",
+].join(", ");
 
-function responsiveImage(baseName, originalWidth) {
+function responsiveImage(baseName, originalWidth, sizes = responsiveLayerSizes) {
   return {
     src: imageUrl(`${baseName}.webp`),
     srcSet: [
@@ -32,7 +39,7 @@ function responsiveImage(baseName, originalWidth) {
       `${imageUrl(`${baseName}-1200w.webp`)} 1200w`,
       `${imageUrl(`${baseName}.webp`)} ${originalWidth}w`,
     ].join(", "),
-    sizes: responsiveLayerSizes,
+    sizes,
   };
 }
 
@@ -51,7 +58,7 @@ export const sceneAssets = {
     mountain: responsiveImage("mountain-land-layer-day", 1896),
     waterBack: responsiveImage("water-back-layer-day", 1898),
     waterFront: responsiveImage("water-front-layer-day", 1897),
-    reed: responsiveImage("reed-layer-day", 1898),
+    reed: responsiveImage("reed-layer-day", 1898, responsiveReedSizes),
   },
   twilight: {
     id: "twilight",
@@ -59,7 +66,7 @@ export const sceneAssets = {
     mountain: responsiveImage("mountain-land-layer-twilight", 1896),
     waterBack: responsiveImage("water-back-layer-twilight", 1898),
     waterFront: responsiveImage("water-front-layer-twilight", 1897),
-    reed: responsiveImage("reed-layer-twilight", 1898),
+    reed: responsiveImage("reed-layer-twilight", 1898, responsiveReedSizes),
   },
   night: {
     id: "night",
@@ -67,7 +74,7 @@ export const sceneAssets = {
     mountain: responsiveImage("mountain-land-layer", 1896),
     waterBack: responsiveImage("water-back-layer", 1898),
     waterFront: responsiveImage("water-front-layer", 1897),
-    reed: responsiveImage("reed-layer", 1898),
+    reed: responsiveImage("reed-layer", 1898, responsiveReedSizes),
   },
 };
 

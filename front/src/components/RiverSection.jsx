@@ -39,7 +39,7 @@ function RiverSection({ boats, sceneLayers }) {
           alt=""
           aria-hidden="true"
           loading="eager"
-          fetchPriority={scene.id === prioritySceneId ? "high" : "auto"}
+          fetchPriority="auto"
           decoding="async"
           style={{ opacity: scene.opacity }}
         />
@@ -69,6 +69,7 @@ function RiverSection({ boats, sceneLayers }) {
             sizes={scene.reed.sizes}
             alt=""
             loading="eager"
+            fetchPriority="auto"
             decoding="async"
           />
           <img
@@ -78,6 +79,7 @@ function RiverSection({ boats, sceneLayers }) {
             sizes={scene.reed.sizes}
             alt=""
             loading="eager"
+            fetchPriority={scene.id === prioritySceneId ? "high" : "auto"}
             decoding="async"
           />
         </div>
