@@ -16,10 +16,10 @@ import Fireflies from "./Fireflies.jsx";
  *   boats: Array<{ id: string, text: string, isNyan: boolean, lane: number, scale: number, drift: number }>,
  *   sceneLayers: Array<{
  *     id: string,
- *     mountain: string,
- *     waterBack: string,
- *     waterFront: string,
- *     reed: string,
+ *     mountain: { src: string, srcSet: string, sizes: string },
+ *     waterBack: { src: string, srcSet: string, sizes: string },
+ *     waterFront: { src: string, srcSet: string, sizes: string },
+ *     reed: { src: string, srcSet: string, sizes: string },
  *     opacity: number,
  *   }>,
  * }} props
@@ -31,7 +31,9 @@ function RiverSection({ boats, sceneLayers }) {
         <img
           key={`${scene.id}-mountain`}
           className="mountain-layer scene-fade-layer"
-          src={scene.mountain}
+          src={scene.mountain.src}
+          srcSet={scene.mountain.srcSet}
+          sizes={scene.mountain.sizes}
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -40,14 +42,14 @@ function RiverSection({ boats, sceneLayers }) {
       ))}
       <Fireflies />
       {sceneLayers.map((scene) => (
-        <WaterRipple key={`${scene.id}-water-back`} layer="back" src={scene.waterBack} opacity={scene.opacity} />
+        <WaterRipple key={`${scene.id}-water-back`} layer="back" image={scene.waterBack} opacity={scene.opacity} />
       ))}
       <div className="river-shine" />
       {boats.map((boat) => (
         <PaperBoat key={boat.id} boat={boat} />
       ))}
       {sceneLayers.map((scene) => (
-        <WaterRipple key={`${scene.id}-water-front`} layer="front" src={scene.waterFront} opacity={scene.opacity} />
+        <WaterRipple key={`${scene.id}-water-front`} layer="front" image={scene.waterFront} opacity={scene.opacity} />
       ))}
       {sceneLayers.map((scene) => (
         <div
@@ -56,8 +58,22 @@ function RiverSection({ boats, sceneLayers }) {
           style={{ opacity: scene.opacity }}
           aria-hidden="true"
         >
-          <img className="reed-layer reed-layer-back" src={scene.reed} alt="" loading="lazy" />
-          <img className="reed-layer reed-layer-front" src={scene.reed} alt="" loading="lazy" />
+          <img
+            className="reed-layer reed-layer-back"
+            src={scene.reed.src}
+            srcSet={scene.reed.srcSet}
+            sizes={scene.reed.sizes}
+            alt=""
+            loading="lazy"
+          />
+          <img
+            className="reed-layer reed-layer-front"
+            src={scene.reed.src}
+            srcSet={scene.reed.srcSet}
+            sizes={scene.reed.sizes}
+            alt=""
+            loading="lazy"
+          />
         </div>
       ))}
       <p className="river-copyright">Open source on GitHub · JBL28</p>

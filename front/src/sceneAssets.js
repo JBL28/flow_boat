@@ -11,18 +11,30 @@
  * 밤 씬은 원본 이미지(접미사 없음)를 재사용한다.
  */
 
-import mountainDay from "../resources/images/mountain-land-layer-day.webp";
-import mountainNight from "../resources/images/mountain-land-layer.webp";
-import mountainTwilight from "../resources/images/mountain-land-layer-twilight.webp";
-import reedDay from "../resources/images/reed-layer-day.webp";
-import reedNight from "../resources/images/reed-layer.webp";
-import reedTwilight from "../resources/images/reed-layer-twilight.webp";
-import waterBackDay from "../resources/images/water-back-layer-day.webp";
-import waterBackNight from "../resources/images/water-back-layer.webp";
-import waterBackTwilight from "../resources/images/water-back-layer-twilight.webp";
-import waterFrontDay from "../resources/images/water-front-layer-day.webp";
-import waterFrontNight from "../resources/images/water-front-layer.webp";
-import waterFrontTwilight from "../resources/images/water-front-layer-twilight.webp";
+const imageUrls = import.meta.glob("../resources/images/*.webp", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+function imageUrl(fileName) {
+  return imageUrls[`../resources/images/${fileName}`];
+}
+
+const responsiveLayerSizes = "(max-width: 720px) 80vw, 100vw";
+
+function responsiveImage(baseName, originalWidth) {
+  return {
+    src: imageUrl(`${baseName}.webp`),
+    srcSet: [
+      `${imageUrl(`${baseName}-480w.webp`)} 480w`,
+      `${imageUrl(`${baseName}-768w.webp`)} 768w`,
+      `${imageUrl(`${baseName}-1200w.webp`)} 1200w`,
+      `${imageUrl(`${baseName}.webp`)} ${originalWidth}w`,
+    ].join(", "),
+    sizes: responsiveLayerSizes,
+  };
+}
 
 /** 씬 전환 순서 — 가중치 비교 및 activeScenes 정렬에 사용 */
 export const sceneOrder = ["day", "twilight", "night"];
@@ -30,32 +42,32 @@ export const sceneOrder = ["day", "twilight", "night"];
 /**
  * 씬 id별 레이어 이미지 경로 맵.
  *
- * @type {Record<string, { id: string, label: string, mountain: string, waterBack: string, waterFront: string, reed: string }>}
+ * @type {Record<string, { id: string, label: string, mountain: object, waterBack: object, waterFront: object, reed: object }>}
  */
 export const sceneAssets = {
   day: {
     id: "day",
     label: "낮",
-    mountain: mountainDay,
-    waterBack: waterBackDay,
-    waterFront: waterFrontDay,
-    reed: reedDay,
+    mountain: responsiveImage("mountain-land-layer-day", 1896),
+    waterBack: responsiveImage("water-back-layer-day", 1898),
+    waterFront: responsiveImage("water-front-layer-day", 1897),
+    reed: responsiveImage("reed-layer-day", 1898),
   },
   twilight: {
     id: "twilight",
     label: "석양",
-    mountain: mountainTwilight,
-    waterBack: waterBackTwilight,
-    waterFront: waterFrontTwilight,
-    reed: reedTwilight,
+    mountain: responsiveImage("mountain-land-layer-twilight", 1896),
+    waterBack: responsiveImage("water-back-layer-twilight", 1898),
+    waterFront: responsiveImage("water-front-layer-twilight", 1897),
+    reed: responsiveImage("reed-layer-twilight", 1898),
   },
   night: {
     id: "night",
     label: "밤",
-    mountain: mountainNight,
-    waterBack: waterBackNight,
-    waterFront: waterFrontNight,
-    reed: reedNight,
+    mountain: responsiveImage("mountain-land-layer", 1896),
+    waterBack: responsiveImage("water-back-layer", 1898),
+    waterFront: responsiveImage("water-front-layer", 1897),
+    reed: responsiveImage("reed-layer", 1898),
   },
 };
 
