@@ -1,6 +1,96 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import paperBoatSrc from "../../resources/images/paper-boat.webp";
+import nyanCat256Src from "../../resources/images/nyan-cat-256w.webp";
+import nyanCat384Src from "../../resources/images/nyan-cat-384w.webp";
+import nyanCat640Src from "../../resources/images/nyan-cat-640w.webp";
 import nyanCatSrc from "../../resources/images/nyan-cat.gif";
+
+const nyanCatSrcSet = [
+  `${nyanCat256Src} 256w`,
+  `${nyanCat384Src} 384w`,
+  `${nyanCat640Src} 640w`,
+].join(", ");
+
+const nyanCatSizes = "(max-height: 622px) 123px, (min-height: 978px) 193px, 19.7vh";
+
+const imageLoadCache = new Map();
+
+function getImageCacheKey({ src, srcSet = "", sizes = "" }) {
+  return [src, srcSet, sizes].join("|");
+}
+
+function preloadImage(descriptor) {
+  const key = getImageCacheKey(descriptor);
+  const cached = imageLoadCache.get(key);
+  if (cached) return cached;
+
+  const promise = new Promise((resolve) => {
+    const image = new Image();
+    image.decoding = "async";
+    if (descriptor.sizes) image.sizes = descriptor.sizes;
+    if (descriptor.srcSet) image.srcset = descriptor.srcSet;
+    image.onload = resolve;
+    image.onerror = resolve;
+    image.src = descriptor.src;
+  });
+
+  imageLoadCache.set(key, promise);
+  return promise;
+}
+
+function useCachedImage(descriptor) {
+  const key = getImageCacheKey(descriptor);
+  const [isLoaded, setIsLoaded] = useState(() => imageLoadCache.has(key));
+
+  useEffect(() => {
+    let isActive = true;
+    preloadImage(descriptor).then(() => {
+      if (isActive) setIsLoaded(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [descriptor, key]);
+
+  return isLoaded;
+}
+
+const paperBoatImage = {
+  src: paperBoatSrc,
+};
+
+const nyanCatImage = {
+  src: nyanCatSrc,
+  srcSet: nyanCatSrcSet,
+  sizes: nyanCatSizes,
+};
+
+function CachedPaperBoatImage() {
+  const isLoaded = useCachedImage(paperBoatImage);
+
+  if (!isLoaded) {
+    return <span className="paper-boat paper-boat-placeholder" aria-hidden="true" />;
+  }
+
+  return <img className="paper-boat" src={paperBoatSrc} alt="종이배" draggable="false" />;
+}
+
+function CachedNyanCatImage() {
+  const isLoaded = useCachedImage(nyanCatImage);
+
+  if (!isLoaded) {
+    return <span className="nyan-cat nyan-cat-placeholder" aria-hidden="true" />;
+  }
+
+  return (
+    <picture className="nyan-cat-frame">
+      <source type="image/webp" srcSet={nyanCatSrcSet} sizes={nyanCatSizes} />
+      <img className="nyan-cat" src={nyanCatSrc} alt="냥캣" draggable="false" />
+    </picture>
+  );
+}
 
 /**
  * Animate a single note-carrying boat across the river.
@@ -42,7 +132,7 @@ function PaperBoat({ boat }) {
         }}
       >
         <div className="boat-wrap" tabIndex={0}>
-          <img className="nyan-cat" src={nyanCatSrc} alt="냥캣" draggable="false" />
+          <CachedNyanCatImage />
           <div className="boat-note">
             <strong>고양이의 생각</strong>
             <span>{boat.text}</span>
@@ -85,7 +175,7 @@ function PaperBoat({ boat }) {
         animate={{ y: [0, -5, 0], rotate: [-1, 1.5, -1] }}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
       >
-        <img className="paper-boat" src={paperBoatSrc} alt="종이배" draggable="false" />
+        <CachedPaperBoatImage />
         <div className="boat-note">
           <strong>흘려보낸 생각</strong>
           <span>{boat.text}</span>

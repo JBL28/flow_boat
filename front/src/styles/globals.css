@@ -353,12 +353,24 @@ textarea:focus {
   user-select: none;
 }
 
+.paper-boat-placeholder {
+  aspect-ratio: 1;
+}
+
+.nyan-cat-frame,
 .nyan-cat {
   display: block;
+}
+
+.nyan-cat {
   height: clamp(56px, 9vh, 88px);
   width: auto;
   image-rendering: pixelated;
   user-select: none;
+}
+
+.nyan-cat-placeholder {
+  aspect-ratio: 1750 / 800;
 }
 
 .boat-base,
@@ -762,6 +774,41 @@ textarea:focus {
     height: 50%;
   }
 
+}
+
+@media (max-width: 700px) {
+  .sound-controls,
+  .star-controls {
+    gap: 0.35rem;
+  }
+
+  .sound-toggle,
+  .hint-toggle,
+  .scene-auto-toggle,
+  .github-link,
+  .star-toggle {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .speaker-icon {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .github-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .star-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .scene-auto-toggle {
+    font-size: 0.68rem;
+  }
 }
 
 @media (min-width: 721px) and (max-height: 960px) {
