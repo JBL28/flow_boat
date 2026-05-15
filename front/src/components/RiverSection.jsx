@@ -25,6 +25,8 @@ import Fireflies from "./Fireflies.jsx";
  * }} props
  */
 function RiverSection({ boats, sceneLayers }) {
+  const prioritySceneId = sceneLayers.find((scene) => scene.opacity > 0.5)?.id ?? sceneLayers[0]?.id;
+
   return (
     <section className="river-section" aria-label="종이배가 흘러가는 강물 영역">
       {sceneLayers.map((scene) => (
@@ -36,7 +38,9 @@ function RiverSection({ boats, sceneLayers }) {
           sizes={scene.mountain.sizes}
           alt=""
           aria-hidden="true"
-          loading="lazy"
+          loading="eager"
+          fetchPriority={scene.id === prioritySceneId ? "high" : "auto"}
+          decoding="async"
           style={{ opacity: scene.opacity }}
         />
       ))}
@@ -64,7 +68,8 @@ function RiverSection({ boats, sceneLayers }) {
             srcSet={scene.reed.srcSet}
             sizes={scene.reed.sizes}
             alt=""
-            loading="lazy"
+            loading="eager"
+            decoding="async"
           />
           <img
             className="reed-layer reed-layer-front"
@@ -72,7 +77,8 @@ function RiverSection({ boats, sceneLayers }) {
             srcSet={scene.reed.srcSet}
             sizes={scene.reed.sizes}
             alt=""
-            loading="lazy"
+            loading="eager"
+            decoding="async"
           />
         </div>
       ))}
