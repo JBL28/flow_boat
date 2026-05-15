@@ -124,7 +124,7 @@ function getVisibleSceneIds(weights) {
 function getDominantScene(weights) {
   return sceneOrder.reduce((dominant, sceneId) => (
     weights[sceneId] > weights[dominant] ? sceneId : dominant
-  ), "night");
+  ), sceneOrder[0]);
 }
 
 /**
@@ -164,10 +164,10 @@ function uniqueScenes(...sceneGroups) {
  *   isManualScene: boolean,
  *   sceneLayers: Array<{
  *     id: string,
- *     mountain: string,
- *     waterBack: string,
- *     waterFront: string,
- *     reed: string,
+ *     mountain: { src: string, srcSet: string, sizes: string },
+ *     waterBack: { src: string, srcSet: string, sizes: string },
+ *     waterFront: { src: string, srcSet: string, sizes: string },
+ *     reed: { src: string, srcSet: string, sizes: string },
  *     opacity: number,
  *   }>,
  *   sceneStyle: Record<string, string|number>,

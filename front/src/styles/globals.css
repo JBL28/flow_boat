@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
   --color-sky: #082a4d;
   --color-sky-deep: #020716;
@@ -165,19 +161,16 @@ textarea:focus {
 }
 
 .send-button {
+  width: 100%;
   min-height: 3rem;
   border: 0;
   border-radius: 8px;
   padding: 0 1.3rem;
+  margin-top: 0.9rem;
   background: var(--color-accent);
   color: #172033;
   font-weight: 700;
   box-shadow: 0 14px 30px rgba(240, 208, 96, 0.22);
-}
-
-.send-button {
-  width: 100%;
-  margin-top: 0.9rem;
 }
 
 .send-button:disabled {
@@ -615,7 +608,8 @@ textarea:focus {
 }
 
 .viewer-box {
-  left: 4.1rem;
+  /* star-controls left (1rem) + first star-toggle (2.75rem) + gap (0.35rem) */
+  left: calc(1rem + 2.75rem + 0.35rem);
 }
 
 .star-box strong {
@@ -744,6 +738,11 @@ textarea:focus {
     left: 0.75rem;
   }
 
+  .viewer-box {
+    /* star-controls left (0.75rem) + first star-toggle (2.75rem) + gap (0.35rem) */
+    left: calc(0.75rem + 2.75rem + 0.35rem);
+  }
+
   .mountain-layer {
     bottom: 34%;
     width: 165vw;
@@ -797,6 +796,11 @@ textarea:focus {
 
   .scene-auto-toggle {
     font-size: 0.68rem;
+  }
+
+  .viewer-box {
+    /* star-controls left (0.75rem) + smaller star-toggle (2.25rem) + gap (0.35rem) */
+    left: calc(0.75rem + 2.25rem + 0.35rem);
   }
 }
 

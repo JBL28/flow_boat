@@ -3,7 +3,6 @@ import paperBoatSrc from "../../resources/images/paper-boat.webp";
 import nyanCat256Src from "../../resources/images/nyan-cat-256w.webp";
 import nyanCat384Src from "../../resources/images/nyan-cat-384w.webp";
 import nyanCat640Src from "../../resources/images/nyan-cat-640w.webp";
-import nyanCatSrc from "../../resources/images/nyan-cat.gif";
 
 const nyanCatSrcSet = [
   `${nyanCat256Src} 256w`,
@@ -57,7 +56,7 @@ function PaperBoat({ boat }) {
             <source type="image/webp" srcSet={nyanCatSrcSet} sizes={nyanCatSizes} />
             <img
               className="nyan-cat"
-              src={nyanCatSrc}
+              src={nyanCat256Src}
               alt="냥캣"
               draggable="false"
               decoding="async"

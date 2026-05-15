@@ -51,24 +51,24 @@ function getTodayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-/**
- * Read today's boat count, resetting the in-memory counter when the day rolls over.
- */
-function getTodayBoatCount() {
+/** Reset the in-memory counter when the UTC date rolls over. */
+function ensureCurrentDay() {
   const currentKey = getTodayKey();
   if (currentKey !== todayCountKey) {
     todayCountKey = currentKey;
     todayBoatCount = 0;
   }
+}
 
+/** Read today's boat count, resetting the counter if the day has rolled over. */
+function getTodayBoatCount() {
+  ensureCurrentDay();
   return todayBoatCount;
 }
 
-/**
- * Increment and return the backend-owned daily boat count.
- */
+/** Increment and return the backend-owned daily boat count. */
 function incrementTodayBoatCount() {
-  getTodayBoatCount();
+  ensureCurrentDay();
   todayBoatCount += 1;
   return todayBoatCount;
 }

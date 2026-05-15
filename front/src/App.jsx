@@ -33,11 +33,14 @@ function App() {
   const [manualScene, setManualScene] = useState(null);
   const { dominantScene, isManualScene, sceneLayers, sceneStyle } = useSceneBackground(manualScene);
   const nextBoatId = useRef(0);
-  const timersRef = useRef([]);
+  const timersRef = useRef(new Set());
   const socketRef = useRef(null);
   const reconnectTimerRef = useRef(null);
   const sendTimestampsRef = useRef([]);
   const rateLimitTimerRef = useRef(null);
+  // WebSocket 메시지 핸들러가 항상 최신 addBoat를 참조하도록 ref에 동기화한다.
+  // effect 의존성에 addBoat를 두면 콜백이 바뀔 때마다 WebSocket이 재연결되기 때문.
+  const addBoatRef = useRef(null);
 
   const removeBoat = useCallback((boatId) => {
     setBoats((currentBoats) => currentBoats.filter((boat) => boat.id !== boatId));
@@ -69,11 +72,18 @@ function App() {
       };
 
       setBoats((currentBoats) => [...currentBoats, boat]);
-      const timerId = window.setTimeout(() => removeBoat(boat.id), boatLifetimeMs);
-      timersRef.current.push(timerId);
+      const timerId = window.setTimeout(() => {
+        removeBoat(boat.id);
+        timersRef.current.delete(timerId);
+      }, boatLifetimeMs);
+      timersRef.current.add(timerId);
     },
     [removeBoat],
   );
+
+  useEffect(() => {
+    addBoatRef.current = addBoat;
+  }, [addBoat]);
 
   const handleLaunchBoat = useCallback(() => {
     const text = worryText.trim();
@@ -141,7 +151,10 @@ function App() {
         try {
           const message = JSON.parse(event.data);
           if (message.type === "boat:add" && typeof message.text === "string") {
-            addBoat(message.text, message.id);
+            const text = message.text.slice(0, 500);
+            const id =
+              typeof message.id === "string" && message.id.length < 64 ? message.id : undefined;
+            addBoatRef.current(text, id);
             if (Number.isFinite(message.todayCount)) {
               setTodayBoatCount(message.todayCount);
             }
@@ -174,7 +187,7 @@ function App() {
       window.clearTimeout(reconnectTimerRef.current);
       socketRef.current?.close();
     };
-  }, [addBoat]);
+  }, []);
 
   return (
     <main className={`app-shell scene-${dominantScene}`} style={sceneStyle}>
